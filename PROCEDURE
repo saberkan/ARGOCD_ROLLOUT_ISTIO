@@ -1,0 +1,17 @@
+$ git clone https://github.com/saberkan/ARGOCD_ROLLOUT_ISTIO.git
+$ cd ../ARGOCD_ROLLOUT_ISTIO/
+$ oc new-project argocd-rollout-istio-demo
+$ oc apply -f 01-gw-vs.yaml
+$ oc apply -f 02-rollout-svc.yaml 
+$ kubectl argo rollouts get rollout demo
+# See app working on browser http://istio-ingressgateway-sm-cp.apps.cluster-46e7.46e7.sandbox995.opentlc.com/
+$ kubectl argo rollouts set image demo "*=argoproj/rollouts-demo:orange"
+$ kubectl argo rollouts get rollout demo 
+$ oc get vs -o yaml
+# Validation
+$  oc create -f 03-analysistemplate.yml 
+$ oc apply -f 04-rollout-with-analysis.yml 
+$ kubectl argo rollouts set image demo "*=argoproj/rollouts-demo:bad-green"
+$ kubectl argo rollouts get rollout demo 
+$ oc get pods -o yaml | grep image: | grep bad
+
